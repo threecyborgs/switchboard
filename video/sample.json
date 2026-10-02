@@ -1,0 +1,239 @@
+{
+ "width": 1920,
+ "height": 1080,
+ "fps": 30,
+ "scenes": [
+  {
+   "type": "title",
+   "title": "switchboard",
+   "subtitle": "A message queue for AI agents across machines",
+   "duration": 3.5
+  },
+  {
+   "type": "card",
+   "title": "Why switchboard?",
+   "bullets": [
+    "Agents on different machines need to hand work to each other",
+    "One hub holds the queue; every machine runs `switchboard watch`",
+    "Messages are leased, so a crashed agent never loses a task",
+    "Works over tailcat (WireGuard), with no ports open to the internet and a very long bullet that has to wrap onto a second line to test wrapping"
+   ],
+   "duration": 7
+  },
+  {
+   "type": "diagram",
+   "title": "How the pieces fit",
+   "nodes": [
+    {
+     "id": "hub",
+     "label": "Sean's Mac\nhub",
+     "x": 0.5,
+     "y": 0.36
+    },
+    {
+     "id": "linux",
+     "label": "Linux box\nworker",
+     "x": 0.2,
+     "y": 0.66
+    },
+    {
+     "id": "pc",
+     "label": "Shadow PC\nworker",
+     "x": 0.8,
+     "y": 0.66,
+     "color": "#bc8cff"
+    }
+   ],
+   "edges": [
+    {
+     "from": "linux",
+     "to": "hub",
+     "label": "tailcat (WireGuard)"
+    },
+    {
+     "from": "hub",
+     "to": "pc",
+     "label": "lease + ack",
+     "dashed": true
+    },
+    {
+     "from": "linux",
+     "to": "pc",
+     "label": "direct",
+     "both": true
+    }
+   ],
+   "caption": "One hub owns the queue; workers lease messages over an encrypted tailnet.",
+   "duration": 7
+  },
+  {
+   "type": "terminal",
+   "layout": "single",
+   "panes": [
+    {
+     "id": "hub",
+     "title": "Sean's Mac — hub"
+    }
+   ],
+   "caption": "Set up the hub once.",
+   "steps": [
+    {
+     "pane": "hub",
+     "type": "cmd",
+     "text": "switchboard setup",
+     "output": "\u001b[1mswitchboard\u001b[0m v0.3.1\n\u001b[32m✓\u001b[0m created queue at ~/.switchboard/queue.db\n\u001b[32m✓\u001b[0m listening on 100.64.0.1:7420 \u001b[2m(tailnet only)\u001b[0m\n\u001b[33m!\u001b[0m no workers registered yet\n\tnext: run \u001b[36mswitchboard join\u001b[0m on each machine 🚀",
+     "pause_after": 1.0
+    },
+    {
+     "type": "caption",
+     "text": "Every command prints real, captured output — this one is a long caption that should wrap neatly onto a second line without overflowing the band at all."
+    },
+    {
+     "pane": "hub",
+     "type": "cmd",
+     "text": "switchboard status --verbose --format table --include-history --since 2026-10-01T00:00:00Z",
+     "output": "\u001b[2m12:00:00\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:01\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:02\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:03\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:04\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:05\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:06\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:07\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:08\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:09\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:10\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:11\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:12\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:13\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:14\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:15\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:16\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:17\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:18\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:19\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:20\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:21\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:22\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:23\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:24\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:25\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:26\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:27\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:28\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:29\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:30\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:31\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:32\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:33\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:34\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:35\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:36\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:37\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:38\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:39\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:40\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:41\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:42\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:43\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:44\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:45\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:46\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:47\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:48\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:49\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:50\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:51\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:52\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:53\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:54\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:55\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:56\u001b[0m \u001b[36magent-0\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:57\u001b[0m \u001b[36magent-1\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:58\u001b[0m \u001b[36magent-2\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m\n\u001b[2m12:00:59\u001b[0m \u001b[36magent-3\u001b[0m heartbeat ok \u001b[32m✓\u001b[0m",
+     "pause_after": 0.8
+    },
+    {
+     "type": "highlight",
+     "pane": "hub",
+     "line_contains": "agent-3",
+     "seconds": 1.5
+    },
+    {
+     "type": "wait",
+     "seconds": 0.5
+    }
+   ]
+  },
+  {
+   "type": "terminal",
+   "layout": "split2",
+   "panes": [
+    {
+     "id": "hub",
+     "title": "Sean's Mac — hub"
+    },
+    {
+     "id": "linux",
+     "title": "Linux box — worker"
+    }
+   ],
+   "caption": "Send from one machine, receive on another.",
+   "steps": [
+    {
+     "pane": "linux",
+     "type": "cmd",
+     "text": "switchboard watch --as linux",
+     "output": "\u001b[2mwatching inbox linux …\u001b[0m",
+     "running": true,
+     "pause_after": 0.5
+    },
+    {
+     "pane": "hub",
+     "type": "cmd",
+     "text": "switchboard send linux \"run the gate on feat/x\"",
+     "output": "\u001b[32msent\u001b[0m msg \u001b[94m#41\u001b[0m → linux",
+     "pause_after": 0.3
+    },
+    {
+     "pane": "linux",
+     "type": "output",
+     "text": "\u001b[1;35m#41\u001b[0m from \u001b[36msean/mac\u001b[0m: run the gate on feat/x\n  \u001b[90mlease\u001b[0m 300s · \u001b[33mattempt 1\u001b[0m"
+    },
+    {
+     "type": "highlight",
+     "pane": "linux",
+     "line_contains": "lease",
+     "seconds": 1.5
+    },
+    {
+     "type": "caption",
+     "text": ""
+    },
+    {
+     "type": "wait",
+     "seconds": 0.8
+    },
+    {
+     "pane": "hub",
+     "type": "clear"
+    },
+    {
+     "pane": "hub",
+     "type": "cmd",
+     "text": "switchboard ls",
+     "output": "ID   TO     STATE\n#41  linux  \u001b[33mleased\u001b[0m",
+     "pause_after": 1.0
+    }
+   ]
+  },
+  {
+   "type": "terminal",
+   "layout": "split3",
+   "panes": [
+    {
+     "id": "hub",
+     "title": "Sean's Mac — hub"
+    },
+    {
+     "id": "linux",
+     "title": "Linux box"
+    },
+    {
+     "id": "pc",
+     "title": "Shadow PC"
+    }
+   ],
+   "caption": "Three machines, one queue.",
+   "steps": [
+    {
+     "pane": "linux",
+     "type": "cmd",
+     "text": "switchboard watch --as linux",
+     "running": true,
+     "pause_after": 0.2
+    },
+    {
+     "pane": "pc",
+     "type": "cmd",
+     "text": "switchboard watch --as pc",
+     "running": true,
+     "pause_after": 0.2
+    },
+    {
+     "pane": "hub",
+     "type": "cmd",
+     "text": "switchboard broadcast \"pull main and rebuild\"",
+     "output": "\u001b[32msent\u001b[0m to 2 workers",
+     "pause_after": 0.2
+    },
+    {
+     "pane": "linux",
+     "type": "output",
+     "text": "\u001b[35m#42\u001b[0m pull main and rebuild\n\u001b[32m✓\u001b[0m acked in 1.2s"
+    },
+    {
+     "pane": "pc",
+     "type": "output",
+     "text": "\u001b[35m#43\u001b[0m pull main and rebuild\n\u001b[32m✓\u001b[0m acked in 2.9s with a long line that wraps in the narrow right-hand pane nicely"
+    },
+    {
+     "type": "caption",
+     "text": "Acks flow back to the hub."
+    },
+    {
+     "type": "wait",
+     "seconds": 1.5
+    }
+   ]
+  },
+  {
+   "type": "title",
+   "title": "switchboard",
+   "subtitle": "github.com/Exano/switchboard",
+   "duration": 3
+  }
+ ]
+}

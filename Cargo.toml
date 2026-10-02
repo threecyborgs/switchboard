@@ -1,0 +1,38 @@
+[package]
+name = "switchboard"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "A durable mailbox, work queue and lock service for AI agents on different machines, carried over tailcat."
+license = "MIT"
+repository = "https://github.com/threecyborgs/switchboard"
+resolver = "3"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "switchboard"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1"
+axum = "0.8"
+base64 = "0.22"
+clap = { version = "4.5", features = ["derive", "env"] }
+fs2 = "0.4"
+rand = "0.8"
+rusqlite = { version = "0.32", features = ["bundled"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time", "sync", "process", "signal", "io-util"] }
+toml = "0.8"
+ureq = { version = "2", features = ["json"] }
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+strip = true
+lto = "thin"
