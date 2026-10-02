@@ -101,23 +101,44 @@ pub fn ensure_client_key(bin: &str) -> Result<String> {
     Ok(key)
 }
 
-/// Stop a tailcat we started earlier whose pid file outlived us (a crash, a kill -9).
+/// Stop a tailcat we started earlier whose pid file outlived us (a crash, a kill -9, a service stop). tailcat can
+/// ignore SIGTERM for a while, so it gets SIGKILL if it is still there after two seconds.
 fn kill_stale(pidfile: &Path) {
     let Ok(pid) = std::fs::read_to_string(pidfile) else { return };
-    let pid = pid.trim();
-    if pid.is_empty() {
+    let pid = pid.trim().to_string();
+    let _ = std::fs::remove_file(pidfile);
+    if pid.is_empty() || !pid.chars().all(|c| c.is_ascii_digit()) {
         return;
     }
     #[cfg(unix)]
     {
-        let cmd = Command::new("ps").args(["-p", pid, "-o", "command="]).output();
-        if let Ok(o) = cmd {
-            if String::from_utf8_lossy(&o.stdout).contains("tailcat") {
-                let _ = Command::new("kill").arg(pid).status();
+        let is_tailcat = || {
+            Command::new("ps").args(["-p", &pid, "-o", "command="]).output()
+                .map(|o| String::from_utf8_lossy(&o.stdout).contains("tailcat")).unwrap_or(false)
+        };
+        if !is_tailcat() {
+            return;
+        }
+        let _ = Command::new("kill").arg(&pid).status();
+        for _ in 0..20 {
+            std::thread::sleep(Duration::from_millis(100));
+            if !is_tailcat() {
+                return;
             }
         }
+        let _ = Command::new("kill").args(["-9", &pid]).status();
     }
-    let _ = std::fs::remove_file(pidfile);
+    #[cfg(windows)]
+    {
+        let _ = Command::new("taskkill").args(["/PID", &pid, "/F"]).status();
+    }
+}
+
+/// Stop every tailcat this home started (used when the service is removed).
+pub fn stop_all(home: &Path) {
+    for f in ["tailcat-hub.pid", "tailcat-enroll.pid", "tailcat-forward.pid"] {
+        kill_stale(&home.join(f));
+    }
 }
 
 /// Handles the hub keeps to tell the tunnel supervisor something changed.
