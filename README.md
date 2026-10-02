@@ -73,7 +73,7 @@ Agents with MCP get the same as tools: `send`, `inbox`, `take`, `renew`, `done`,
 | A retried send after a timeout could arrive twice | Every send carries an idempotency key; a retry returns the first message |
 | A message to `tony` was a work item and a broadcast at once | `tony` = work for any one `tony/*` agent; `tony/*` = a notice everyone gets and acks separately |
 | `nohup` shell loop on a laptop; died with the disk; a SIGBUS once; no backups | launchd / systemd / logon-task service, WAL SQLite behind one writer, refuses new mail below a free-disk floor instead of corrupting, daily `VACUUM INTO` backups (7 kept), `/healthz`, `doctor` |
-| Peers' `tailcat forward` stayed dead after the hub restarted | The peer daemon probes the hub through the tunnel every 5 s and restarts the forward after two misses (measured: a `kill -9`ed hub is reachable from a peer again within 30 s) |
+| Peers' `tailcat forward` stayed dead after the hub restarted | The peer daemon probes the hub through the tunnel every 5 s and restarts the forward after two misses (measured in the demo: a peer had new mail 20–23 s after the hub was `kill -9`ed) |
 | Adding a peer: send your node key to the hub owner, who edits an allow file and restarts | `invite` / `join`: single-use, expiring codes; the hub learns the peer's key from the tunnel itself and restarts its listener with the new allow list |
 
 ## How it fits together
@@ -143,3 +143,11 @@ python3 scripts/e2e_tailcat.py       # a real hub and peer over tailcat, each in
 - Windows: the service is a logon scheduled task, and it has not been tested on Windows yet.
 - No binary releases or Homebrew tap yet: install with `cargo install --git`.
 - The tunnel is tailcat only. iroh would be the natural second transport.
+
+## The demo video
+
+`video/capture.py` runs the whole demo for real and writes `video/storyboard.json`. That covers two sandboxed
+machines with launchd services, a Codex agent working the queue over MCP, lock fencing, a `kill -9` of the hub, and
+an optional join from the Linux box. `video/render.py` turns the storyboard into a 1080p mp4 (`video/out/`, not
+committed). Every terminal line in the video is captured output. Two things are tidied for display: the sandbox
+folder is shown as `~`, and each sandbox's service-label suffix is dropped.

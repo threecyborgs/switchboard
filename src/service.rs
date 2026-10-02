@@ -156,6 +156,14 @@ pub fn install(exe: &Path) -> Result<String> {
 }
 
 pub fn uninstall() -> Result<()> {
+    let r = uninstall_service();
+    // The service manager stops the daemon; its tailcat children can outlive it, so stop them too.
+    std::thread::sleep(std::time::Duration::from_millis(500));
+    crate::tailcat::stop_all(&home());
+    r
+}
+
+fn uninstall_service() -> Result<()> {
     #[cfg(target_os = "macos")]
     {
         let _ = Command::new("launchctl").args(["bootout", &format!("gui/{}/{}", uid(), label())]).output();
