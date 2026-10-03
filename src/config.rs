@@ -32,7 +32,7 @@ pub fn is_default_home() -> bool {
 pub struct Config {
     /// "hub" or "peer".
     pub role: String,
-    /// The mailbox this machine acts as by default (`sean`, `tony`); agents add `/topic`.
+    /// The mailbox this machine acts as by default (`alice`, `bob`); agents add `/topic`.
     pub name: String,
     /// The hub's HTTP address as seen from this machine (always loopback).
     pub url: String,
@@ -167,7 +167,7 @@ pub fn parse_duration(s: &str) -> Result<u64> {
     Ok(n * mult)
 }
 
-/// Mailbox names: `sean`, `tony/merge`, `tony/worldgen.2`.
+/// Mailbox names: `alice`, `bob/merge`, `bob/docs.2`.
 pub fn valid_box(name: &str) -> bool {
     !name.is_empty()
         && name.len() <= 120
@@ -192,13 +192,13 @@ mod tests {
 
     #[test]
     fn names() {
-        assert!(valid_box("tony/merge"));
-        assert!(!valid_box("tony//merge"));
-        assert!(!valid_box("tony/*"));
-        assert!(valid_destination("tony/*"));
+        assert!(valid_box("bob/merge"));
+        assert!(!valid_box("bob//merge"));
+        assert!(!valid_box("bob/*"));
+        assert!(valid_destination("bob/*"));
         assert!(valid_destination("*"));
-        assert!(prefix_allows("tony", "tony/merge"));
-        assert!(!prefix_allows("tony", "tonya"));
+        assert!(prefix_allows("bob", "bob/merge"));
+        assert!(!prefix_allows("bob", "boba"));
         assert!(prefix_allows("*", "anything"));
         assert_eq!(parse_duration("15m").unwrap(), 900);
         assert_eq!(parse_duration("90").unwrap(), 90);

@@ -8,7 +8,7 @@ use switchboard::{agents, fmt, hub, mcp, onboard, service};
 #[derive(Parser)]
 #[command(name = "switchboard", version, about = "Durable mail, work queues and locks for AI agents on different \
 machines, carried over tailcat.", after_help = "Start here:\n  hub machine:   switchboard setup\n  then:          \
-switchboard invite tony\n  other machine: switchboard join <code>\n  anywhere:      switchboard doctor")]
+switchboard invite bob\n  other machine: switchboard join <code>\n  anywhere:      switchboard doctor")]
 struct Cli {
     /// Mailbox to act as (person/topic). Default: $SWITCHBOARD_AS, $AGENT_MAIL_AS, or this machine's name.
     #[arg(long = "as", global = true)]
@@ -36,7 +36,7 @@ enum Cmd {
         #[arg(long)]
         no_agents: bool,
     },
-    /// On the hub: make a single-use join code for a person (e.g. `tony`).
+    /// On the hub: make a single-use join code for a person (e.g. `bob`).
     Invite {
         name: String,
         /// How long the code stays valid (30m, 24h, 7d).
@@ -67,7 +67,7 @@ enum Cmd {
         #[arg(long)]
         no_tailcat: bool,
     },
-    /// Send a message to a mailbox (tony/merge), a person (tony) or a broadcast (tony/*, *).
+    /// Send a message to a mailbox (bob/merge), a person (bob) or a broadcast (bob/*, *).
     Send {
         to: String,
         body: String,

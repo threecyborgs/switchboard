@@ -20,9 +20,9 @@ Use the `switchboard` MCP tools when you have them; otherwise the `switchboard` 
 
 ## Who you are
 
-You act as a mailbox named `person/topic`, like `sean/netcode` or `tony/merge`. Pick one that says what you work on
-and pass it as `as` (MCP) or `--as` / `SWITCHBOARD_AS` (CLI). A message sent to `tony` can be taken by any `tony/...`
-agent; one sent to `tony/merge` only by that one. `tony/*` or `*` broadcasts a notice to everyone under it.
+You act as a mailbox named `person/topic`, like `alice/netcode` or `bob/merge`. Pick one that says what you work on
+and pass it as `as` (MCP) or `--as` / `SWITCHBOARD_AS` (CLI). A message sent to `bob` can be taken by any `bob/...`
+agent; one sent to `bob/merge` only by that one. `bob/*` or `*` broadcasts a notice to everyone under it.
 
 ## Working the queue
 
