@@ -71,15 +71,15 @@ def main():
     ap.add_argument("--port", type=int, default=15490)
     a = ap.parse_args()
     base = Path(tempfile.mkdtemp(prefix="switchboard-e2e-"))
-    hub = Machine("sean-hub", base / "sean", a.bin)
-    peer = Machine("tony-peer", base / "tony", a.bin)
+    hub = Machine("alice-hub", base / "alice", a.bin)
+    peer = Machine("bob-peer", base / "bob", a.bin)
     t0 = time.time()
     print(f"switchboard e2e over tailcat, sandbox {base}")
     try:
-        hub.run("setup", "--name", "sean", "--port", str(a.port), "--no-service", "--no-agents")
+        hub.run("setup", "--name", "alice", "--port", str(a.port), "--no-service", "--no-agents")
         hub.start()
         step(f"hub set up and running: {hub.wait_whoami()}")
-        _, out = hub.run("invite", "tony", "--ttl", "10m", timeout=60)
+        _, out = hub.run("invite", "bob", "--ttl", "10m", timeout=60)
         code = next(w for w in out.split() if w.startswith("sb1."))
         step(f"invite made ({len(code)} chars)")
         t_join = time.time()
@@ -93,28 +93,28 @@ def main():
         step("the invite can't be used twice")
 
         _, out = hub.run("inbox")
-        assert "tony joined" in out, out
-        step("the hub owner got a 'tony joined' notice")
-        peer.run("--as", "tony/worldgen", "send", "sean", "biome seams on face 3", "--subject", "seams")
-        _, out = hub.run("--as", "sean/coord", "take")
+        assert "bob joined" in out, out
+        step("the hub owner got a 'bob joined' notice")
+        peer.run("--as", "bob/docs", "send", "alice", "flaky parser test on main", "--subject", "flaky test")
+        _, out = hub.run("--as", "alice/coord", "take")
         mid = int(out.split()[0].lstrip("#"))
-        assert "biome seams" in out, out
-        hub.run("--as", "sean/coord", "done", str(mid), "--note", "fixed on sean/seams")
-        _, out = peer.run("--as", "tony/worldgen", "inbox")
-        assert "fixed on sean/seams" in out, out
+        assert "flaky parser" in out, out
+        hub.run("--as", "alice/coord", "done", str(mid), "--note", "fixed on alice/seams")
+        _, out = peer.run("--as", "bob/docs", "inbox")
+        assert "fixed on alice/seams" in out, out
         step("peer -> hub task, taken under a lease, done with a reply that came back over the tunnel")
 
-        _, out = hub.run("--as", "sean", "lock", "take", "feat/a", "--ttl", "3s")
+        _, out = hub.run("--as", "alice", "lock", "take", "feat/a", "--ttl", "3s")
         fence = int(out.split("fence ")[1].split(".")[0])
-        code3, _ = peer.run("--as", "tony/merge", "lock", "take", "tony/b", check=False)
+        code3, _ = peer.run("--as", "bob/merge", "lock", "take", "bob/b", check=False)
         assert code3 == 2
         time.sleep(4)
-        _, out = peer.run("--as", "tony/merge", "lock", "take", "tony/b")
+        _, out = peer.run("--as", "bob/merge", "lock", "take", "bob/b")
         assert hub.run("lock", "check", str(fence), check=False)[0] == 3
         step("lock lease lapsed, peer took it with a newer fence, the stale fence is refused")
-        _, out = peer.run("--as", "tony/merge", "inbox")
+        _, out = peer.run("--as", "bob/merge", "inbox")
         assert "EXPIRED" in out, out
-        peer.run("--as", "tony/merge", "lock", "release", "--note", "pushed")
+        peer.run("--as", "bob/merge", "lock", "release", "--note", "pushed")
 
         # hub restart: the peer's forward and its saved cursor ride through it
         hub.stop()
@@ -122,7 +122,7 @@ def main():
         hub.start()
         hub.wait_whoami()
         peer.wait_whoami()
-        hub.run("send", "tony", "after the restart")
+        hub.run("send", "bob", "after the restart")
         _, out = peer.run("inbox")
         assert "after the restart" in out, out
         step(f"hub restarted (peer saw it down: exit {code4}); the peer reconnected with no action")
@@ -130,7 +130,7 @@ def main():
         _, out = peer.run("doctor", check=False)
         assert "hub reachable" in out and "token valid" in out, out
         _, out2 = hub.run("doctor", check=False)
-        assert "1 enrolled peer(s): tony" in out2, out2
+        assert "1 enrolled peer(s): bob" in out2, out2
         step("doctor is green on both sides (apart from the service, which this test runs by hand)")
         print(f"PASS in {time.time() - t0:.0f}s")
     finally:

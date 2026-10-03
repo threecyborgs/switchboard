@@ -86,7 +86,7 @@ pub fn setup(o: Options) -> Result<()> {
     }
     let name = o.name.clone().or_else(|| existing.as_ref().map(|c| c.name.clone())).unwrap_or_else(default_name);
     if !crate::config::valid_box(&name) || name.contains('/') {
-        bail!("--name must be a plain name like `sean`, not {name:?}");
+        bail!("--name must be a plain name like `alice`, not {name:?}");
     }
     let mut hc = existing.as_ref().and_then(|c| c.hub.clone()).unwrap_or_default();
     if let Some(p) = o.port {
@@ -124,7 +124,7 @@ pub fn setup(o: Options) -> Result<()> {
     println!();
     println!("\x1b[1mThe hub is ready.\x1b[0m Next:");
     if cfg.tailcat.is_some() {
-        println!("  switchboard invite tony          # prints a one-line join command for tony's machine");
+        println!("  switchboard invite bob          # prints a one-line join command for bob's machine");
     }
     println!("  switchboard send {name}/test \"hello\" && switchboard inbox --as {name}/test");
     println!("  switchboard doctor               # checks everything, says how to fix what isn't right");

@@ -26,19 +26,19 @@
    "nodes": [
     {
      "id": "hub",
-     "label": "Sean's Mac\nhub",
+     "label": "Alice's Mac\nhub",
      "x": 0.5,
      "y": 0.36
     },
     {
      "id": "linux",
-     "label": "Linux box\nworker",
+     "label": "Linux server\nworker",
      "x": 0.2,
      "y": 0.66
     },
     {
      "id": "pc",
-     "label": "Shadow PC\nworker",
+     "label": "Build server\nworker",
      "x": 0.8,
      "y": 0.66,
      "color": "#bc8cff"
@@ -72,7 +72,7 @@
    "panes": [
     {
      "id": "hub",
-     "title": "Sean's Mac — hub"
+     "title": "Alice's Mac — hub"
     }
    ],
    "caption": "Set up the hub once.",
@@ -113,11 +113,11 @@
    "panes": [
     {
      "id": "hub",
-     "title": "Sean's Mac — hub"
+     "title": "Alice's Mac — hub"
     },
     {
      "id": "linux",
-     "title": "Linux box — worker"
+     "title": "Linux server — worker"
     }
    ],
    "caption": "Send from one machine, receive on another.",
@@ -140,7 +140,7 @@
     {
      "pane": "linux",
      "type": "output",
-     "text": "\u001b[1;35m#41\u001b[0m from \u001b[36msean/mac\u001b[0m: run the gate on feat/x\n  \u001b[90mlease\u001b[0m 300s · \u001b[33mattempt 1\u001b[0m"
+     "text": "\u001b[1;35m#41\u001b[0m from \u001b[36malice/mac\u001b[0m: run the gate on feat/x\n  \u001b[90mlease\u001b[0m 300s · \u001b[33mattempt 1\u001b[0m"
     },
     {
      "type": "highlight",
@@ -175,15 +175,15 @@
    "panes": [
     {
      "id": "hub",
-     "title": "Sean's Mac — hub"
+     "title": "Alice's Mac — hub"
     },
     {
      "id": "linux",
-     "title": "Linux box"
+     "title": "Linux server"
     },
     {
      "id": "pc",
-     "title": "Shadow PC"
+     "title": "Build server"
     }
    ],
    "caption": "Three machines, one queue.",

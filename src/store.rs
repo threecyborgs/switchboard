@@ -183,7 +183,7 @@ pub struct Store {
     opts: StoreOptions,
 }
 
-/// The person part of a mailbox: `tony/merge` -> `tony`.
+/// The person part of a mailbox: `bob/merge` -> `bob`.
 pub fn person(name: &str) -> &str {
     name.split('/').next().unwrap_or(name)
 }
@@ -238,7 +238,7 @@ impl Store {
 
     fn send_in(db: &Connection, sender: &str, m: &NewMsg) -> Result<Msg> {
         if !valid_destination(&m.to) {
-            return refuse(Refusal::Invalid(format!("bad destination {:?} (a mailbox like tony/merge, tony/* or *)", m.to)));
+            return refuse(Refusal::Invalid(format!("bad destination {:?} (a mailbox like bob/merge, bob/* or *)", m.to)));
         }
         if m.body.is_empty() {
             return refuse(Refusal::Invalid("body is empty".into()));
@@ -759,7 +759,7 @@ impl Store {
 
     pub fn create_invite(&self, prefix: &str, created_by: &str, ttl_secs: u64) -> Result<String> {
         if !valid_box(prefix) || prefix.contains('/') {
-            return refuse(Refusal::Invalid(format!("invite a person name like `tony`, not {prefix:?}")));
+            return refuse(Refusal::Invalid(format!("invite a person name like `bob`, not {prefix:?}")));
         }
         let secret = random_secret("inv_");
         let now = now_ms();

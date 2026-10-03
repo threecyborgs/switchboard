@@ -11,7 +11,7 @@ use std::io::{BufRead, Write};
 const PROTOCOL: &str = "2025-06-18";
 
 fn tools() -> Value {
-    let as_prop = json!({"type": "string", "description": "Mailbox to act as (person/topic, e.g. sean/netcode). Defaults to this machine's name or $SWITCHBOARD_AS."});
+    let as_prop = json!({"type": "string", "description": "Mailbox to act as (person/topic, e.g. alice/netcode). Defaults to this machine's name or $SWITCHBOARD_AS."});
     let id = json!({"type": "integer", "description": "Message id"});
     let lock_name = json!({"type": "string", "description": "Lock name (default: main)"});
     let t = |name: &str, desc: &str, props: Value, required: &[&str]| {
@@ -22,7 +22,7 @@ fn tools() -> Value {
     };
     json!([
         t("whoami", "Show which mailbox you act as, what your token allows, and whether the hub is reachable.", json!({}), &[]),
-        t("send", "Send a message. `to` is a mailbox (tony/merge), a person (tony: any of their agents may take it), or a broadcast (tony/* or *).",
+        t("send", "Send a message. `to` is a mailbox (bob/merge), a person (bob: any of their agents may take it), or a broadcast (bob/* or *).",
           json!({"to": {"type": "string"}, "body": {"type": "string"}, "subject": {"type": "string"},
                  "reply_to": {"type": "integer"}, "ttl_secs": {"type": "integer", "description": "expire unread after this many seconds"}}),
           &["to", "body"]),
