@@ -11,10 +11,26 @@ use std::process::{Command, Stdio};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
+/// Key names are per `SWITCHBOARD_HOME`: tailcat keys are shared by the whole user account, so a second hub on the same
+/// machine must not reuse the first hub's identity (address, allow list). The default home keeps the plain names.
+fn key_suffix() -> String {
+    if crate::config::is_default_home() {
+        String::new()
+    } else {
+        let h = crate::store::hash_secret(&crate::config::home().to_string_lossy());
+        format!("-{}", &h[..8])
+    }
+}
+
 /// The hub's saved tailcat server key: its address stays the same across restarts.
-pub const HUB_KEY: &str = "switchboard";
+pub fn hub_key() -> String {
+    format!("switchboard{}", key_suffix())
+}
+
 /// A second key for the enrollment listener, which lets any client in but only to spend an invite.
-pub const ENROLL_KEY: &str = "switchboard-enroll";
+pub fn enroll_key() -> String {
+    format!("switchboard-enroll{}", key_suffix())
+}
 
 pub fn hub_addr_file(home: &Path) -> PathBuf {
     home.join("hub.addr")
@@ -170,7 +186,7 @@ pub fn spawn_hub_tunnel(store: Arc<Store>, home: PathBuf, bin: String, port: u16
                 let allow_arg = if allow.is_empty() { "none".to_string() } else { allow.join(",") };
                 let started = Instant::now();
                 let child = tokio::process::Command::new(&bin)
-                    .args(["serve", &format!("--key={HUB_KEY}"), &format!("--allow={allow_arg}"), &port.to_string()])
+                    .args(["serve", &format!("--key={}", hub_key()), &format!("--allow={allow_arg}"), &port.to_string()])
                     .env("TAILCAT_ADDR_FILE", hub_addr_file(&home))
                     .stdin(Stdio::null())
                     .kill_on_drop(true)
@@ -221,7 +237,7 @@ pub fn spawn_hub_tunnel(store: Arc<Store>, home: PathBuf, bin: String, port: u16
                 match (want, child.is_some()) {
                     (true, false) => {
                         let spawned = tokio::process::Command::new(&bin)
-                            .args(["serve", &format!("--key={ENROLL_KEY}"), "--", &exe, "enroll-stdio"])
+                            .args(["serve", &format!("--key={}", enroll_key()), "--", &exe, "enroll-stdio"])
                             .env("TAILCAT_ADDR_FILE", enroll_addr_file(&home))
                             .env("SWITCHBOARD_HOME", &home)
                             .stdin(Stdio::null())

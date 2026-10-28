@@ -141,6 +141,19 @@ switchboard lock release --note "pushed $(git rev-parse --short HEAD)"
 
 Pick an always-on machine for the hub; peers only need to be up when they work.
 
+### Several hubs on one machine
+
+Give each hub its own home, port and no agent registration, for example a separate team:
+
+```sh
+SWITCHBOARD_HOME=~/.switchboard-teamb switchboard setup --port 5491 --no-agents
+SWITCHBOARD_HOME=~/.switchboard-teamb switchboard invite carol
+```
+
+A non-default `SWITCHBOARD_HOME` gets its own background service and its own tailcat keys (`switchboard-<id>`,
+`switchboard-enroll-<id>`), so hubs never share an address, allow list or mail. Use `--no-agents` so Claude Code and
+Codex keep pointing at your main hub.
+
 ## Not done yet
 
 - Windows: the service is a logon scheduled task, and it has not been tested on Windows yet.

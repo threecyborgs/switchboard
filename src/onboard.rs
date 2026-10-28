@@ -98,8 +98,8 @@ pub fn setup(o: Options) -> Result<()> {
     } else {
         let bin = tailcat::find_or_install(false)?;
         ok(format!("tailcat found at {bin}"));
-        tailcat::ensure_server_key(&bin, tailcat::HUB_KEY)?;
-        tailcat::ensure_server_key(&bin, tailcat::ENROLL_KEY)?;
+        tailcat::ensure_server_key(&bin, &tailcat::hub_key())?;
+        tailcat::ensure_server_key(&bin, &tailcat::enroll_key())?;
         ok("tailcat server keys ready (switchboard, switchboard-enroll)");
         Some(bin)
     };
